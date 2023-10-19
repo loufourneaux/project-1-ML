@@ -119,3 +119,53 @@ def sigmoid(t):
         scalar or numpy array"""
     return 1 / (1 + np.exp(-t))
 
+
+def calculate_loss(y, tx, w):
+    """compute the cost by negative log likelihood.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a non-negative loss
+
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(4).reshape(2, 2)
+    >>> w = np.c_[[2., 3.]]
+    >>> round(calculate_loss(y, tx, w),8)
+    1.52429481
+    """
+    assert y.shape[0] == tx.shape[0]
+    assert tx.shape[1] == w.shape[0]
+
+    sig= sigmoid(np.dot(tx, w))
+                 
+    loss = (y.T.dot(np.log(sig)) + (1 - y).T.dot(np.log(1 - sig)))
+    return np.sum(-loss)/len(y)
+    
+    
+def calculate_gradient(y, tx, w):
+    """compute the gradient of loss.
+
+    Args:
+        y:  shape=(N, 1)
+        tx: shape=(N, D)
+        w:  shape=(D, 1)
+
+    Returns:
+        a vector of shape (D, 1)
+
+    >>> np.set_printoptions(8)
+    >>> y = np.c_[[0., 1.]]
+    >>> tx = np.arange(6).reshape(2, 3)
+    >>> w = np.array([[0.1], [0.2], [0.3]])
+    >>> calculate_gradient(y, tx, w)
+    array([[-0.10370763],
+           [ 0.2067104 ],
+           [ 0.51712843]])
+    """
+    
+    return 1/len(y)*(tx.T.dot(sigmoid(np.dot(tx, w))-y))
+    
