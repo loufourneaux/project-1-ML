@@ -28,6 +28,7 @@ def remove_outliers(data):
         col_data[(col_data<lower_bound)|(col_data>upper_bound)] = np.median(col_data)
         filtered_data[:,i]= col_data
     return filtered_data
+  
   def standardize(data):
 
     mean = np.mean(data, axis=0)
@@ -37,3 +38,35 @@ def remove_outliers(data):
             std[i] = 1
     standardized_data = (data - mean)/std
     return standardized_data
+
+def remove_correlated_columns(data, correlation_threshold=0.1):
+  uncorrelated_data = data.copy()
+  upper_triangle = np.triu(np.ones((data.shape[1], data.shape[1]), dtype=bool), k=1)
+
+  indices_to_delete = []
+
+  for i in range(data.shape[1]):
+    for j in range(i + 1, data.shape[1]):
+      if upper_triangle[i, j]:
+        corr = np.corrcoef(uncorrelated_data[:, i], uncorrelated_data[:, j])[0, 1]
+        if np.abs(corr) >= correlation_threshold:
+          indices_to_delete.append(j)
+
+  uncorrelated_data = np.delete(uncorrelated_data, indices_to_delete, axis=1)
+
+  return uncorrelated_data
+
+def clean_data(data):
+  clean_datas = data.copy()
+
+  for i in range(data.shape[1]):
+    col = clean_datas[:, i]
+    is_nan = np.isnan(col)
+
+    if is_nan.any():
+      valid_values = col[~is_nan]
+      if valid_values.size > 0:
+        median = np.median(valid_values)
+        col[is_nan] = median
+
+  return clean_datas
