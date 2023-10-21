@@ -28,4 +28,12 @@ def remove_outliers(data):
         col_data[(col_data<lower_bound)|(col_data>upper_bound)] = np.median(col_data)
         filtered_data[:,i]= col_data
     return filtered_data
-  
+  def standardize(data):
+
+    mean = np.mean(data, axis=0)
+    std = np.std(data, axis= 0)
+    for i in range(len(std)):
+        if std[i] < 1e-10:
+            std[i] = 1
+    standardized_data = (data - mean)/std
+    return standardized_data
