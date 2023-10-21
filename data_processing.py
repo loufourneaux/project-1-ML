@@ -14,7 +14,18 @@ def remove_col(x, nan_percentage = 0.8) :
   x = x[:, [i for i in range(x.shape[1]) if i not in to_delete]]
   return x
 
+def remove_outliers(data):
 
+    filtered_data = data.copy()
+    for i in range(filtered_data.shape[1]):
+        col_data = filtered_data[:,i]
+        q1 = np.percentile(col_data,25)
+        q3 = np.percentile(col_data,75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5*iqr
+        upper_bound = q3 + 1.5*iqr
 
-  #standardize values ?? no bc not continuous variables 
+        col_data[(col_data<lower_bound)|(col_data>upper_bound)] = np.median(col_data)
+        filtered_data[:,i]= col_data
+    return filtered_data
   
