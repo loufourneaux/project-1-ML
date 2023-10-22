@@ -70,3 +70,78 @@ def clean_data(data):
         col[is_nan] = median
 
   return clean_datas
+
+def cleaning_answers(data):
+    datas_cleaned = data.copy()
+    
+    for i in range(datas_cleaned.shape[1]):
+        unique_values = np.unique(datas_cleaned[:,i])
+        nbr_unique_values = len(unique_values)
+        max_value = np.nanmax(datas_cleaned[:,i])
+        median = np.nanmedian(datas_cleaned[:,i])
+        conditions = []
+        replacement = []
+        if nbr_unique_values <= 5 or max_value <= 9:
+            print('condition 1')
+            if 7 in unique_values:
+                conditions.append(datas_cleaned[:,i]==7)
+                replacement.append(2)
+            if 8 in unique_values:
+                conditions.append(datas_cleaned[:,i]==8)
+                replacement.append(0)
+            if 9 in unique_values:
+                conditions.append(datas_cleaned[:,i]==9)
+                replacement.append(2)
+            
+            
+        elif (max_value <= 99 and max_value > 9):
+            print('condition 2')
+            if 77 in unique_values:
+                conditions.append(datas_cleaned[:,i]==77)
+                replacement.append(median)
+            if 88 in unique_values:
+                conditions.append(datas_cleaned[:,i]==88)
+                replacement.append(0)
+            if 99 in unique_values:
+                conditions.append(datas_cleaned[:,i]==99)
+                replacement.append(median)
+            
+        elif (max_value <= 999 and max_value > 99 ):
+            print('condition 3')
+            if 777 in unique_values:
+                conditions.append(datas_cleaned[:,i]==777)
+                replacement.append(median)
+            if 888 in unique_values:
+                conditions.append(datas_cleaned[:,i]==888)
+                replacement.append(0)
+            if 999 in unique_values:
+                conditions.append(datas_cleaned[:,i]==999)
+                replacement.append(median)
+            
+        elif max_value > 999 and max_value <= 9999:
+            print('condition 4')
+            if 7777 in unique_values:
+                conditions.append(datas_cleaned[:,i]==7777)
+                replacement.append(median)
+            if 8888 in unique_values:
+                conditions.append(datas_cleaned[:,i]==8888)
+                replacement.append(median)
+            if 9999 in unique_values:
+                conditions.append(datas_cleaned[:,i]==9999)
+                replacement.append(median)
+                
+        elif max_value > 9999 and max_value <= 999999:
+            print('condition 5')
+            if 777777 in unique_values:
+                conditions.append(datas_cleaned[:,i]==777777)
+                replacement.append(median)
+            if 888888 in unique_values:
+                conditions.append(datas_cleaned[:,i]==888888)
+                replacement.append(median)
+            if 999999 in unique_values:
+                conditions.append(datas_cleaned[:,i]==999999)
+                replacement.append(median)
+
+        for condition, replacement in zip(conditions, replacement):
+            datas_cleaned[condition, i] = replacement
+    return datas_cleaned
