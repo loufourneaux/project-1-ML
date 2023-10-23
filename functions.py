@@ -23,7 +23,7 @@ def compute_gradient(y, tx, w):
     Returns:
         An array of shape (2, ) (same shape as w), containing the gradient of the loss at w.
     """
-
+    y = y.reshape(-1,1)
     e=y-np.dot(tx,w)
     gradient = (-1/y.shape[0])*np.dot(np.transpose(tx),e)
     return gradient
