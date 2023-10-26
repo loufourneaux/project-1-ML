@@ -1,7 +1,7 @@
 import numpy as np
 
   #Remove columns in which there are too much NaN values (<80%)
-def remove_col(x, nan_percentage = 0.8) :
+def remove_nan_col(x, nan_percentage = 0.8) :
 
   #Remove columns in which there are too much NaN values (<80%)
   to_delete = []
@@ -39,24 +39,22 @@ def remove_outliers(data):
     standardized_data = (data - mean)/std
     return standardized_data
 
-def remove_correlated_columns(data, correlation_threshold=0.1):
-  uncorrelated_data = data.copy()
-  upper_triangle = np.triu(np.ones((data.shape[1], data.shape[1]), dtype=bool), k=1)
+def remove_correlated_columns(data, correlation_threshold=0.7):
+    indices=[]
 
-  indices_to_delete = []
+    for i in range(data.shape[1]):
+        for j in range(i+1,data.shape[1]):
+            col1 = data[:,i]
+            col2 = data[:,j]
+            corr = np.corrcoef(col1, col2)
 
-  for i in range(data.shape[1]):
-    for j in range(i + 1, data.shape[1]):
-      if upper_triangle[i, j]:
-        corr = np.corrcoef(uncorrelated_data[:, i], uncorrelated_data[:, j])[0, 1]
-        if np.abs(corr) >= correlation_threshold:
-          indices_to_delete.append(j)
+            if (np.abs(corr[0][1]) >= correlation_threshold):
+                indices.append(j)
 
-  uncorrelated_data = np.delete(uncorrelated_data, indices_to_delete, axis=1)
+    uncorrelated_data = np.delete(data,indices,1)
+    return uncorrelated_data
 
-  return uncorrelated_data
-
-def clean_data(data):
+def remove_remaining_nan(data):
   clean_datas = data.copy()
 
   for i in range(data.shape[1]):
