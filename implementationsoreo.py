@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from costs import *
+from functions import *
+from helpers import batch_iter
 
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
@@ -189,103 +192,3 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     return w, loss
 
 
-def compute_mse(e):
-    """Calculate the mse for vector e."""
-    return np.mean(e**2) / 2
-
-
-def compute_mae(e):
-    """Calculate the mae for vector e."""
-    return np.mean(np.abs(e))
-
-
-def calculate_logloss(y_true, y_pred, eps=1e-8):
-    """Calculate the logloss"""
-    return -np.mean(
-        y_true * np.log(y_pred + eps) + (1 - y_true) * np.log(1 - y_pred + eps)
-    )
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-def compute_loss(y, tx, w, loss_type):
-    """Calculate the loss using either MSE or MAE.
-
-    Args:
-        y: shape=(N, )
-        tx: shape=(N,2)
-        w: shape=(2,). The vector of model parameters.
-        loss_type: string in ["mae", "mse", "log"] specifying the type of loss to compute
-
-    Returns:
-        the value of the loss (a scalar), corresponding to the input parameters w.
-    """
-
-    e = y -tx.dot(w)
-
-    if loss_type == "mse":
-        return calculate_mse(e)
-
-    elif loss_type == "mae":
-        return calculate_mae(e)
-
-    elif loss_type == "log":
-        y_pred = sigmoid(tx @ w)
-        return calculate_logloss(y, y_pred)
-
-    else:
-        raise ValueError(
-            "Invalid value for argument 'loss_type' when calling compute_loss, 'type' must be in ['mse', 'mae', 'log']."
-        )
-
-
-def compute_gradient(y, tx, w, loss_type, lambda_=0):
-    """Computes the gradient at w.
-
-    Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N,D)
-        w: numpy array of shape=(D, ). The vector of model parameters.
-        loss_type: string in ["mse", "log"] specifying the type of loss
-
-    Returns:
-        An numpy array of shape (D, ) (same shape as w), containing the gradient of the loss at w.
-    """
-
-    if loss_type == "mse":
-        e = y - tx @ w
-        grad = -(tx.T @ e) / y.shape[0]
-
-    elif loss_type == "log":
-        e = sigmoid(tx @ w) - y
-        grad = (tx.T @ e) / y.shape[0]
-        grad = grad + 2 * lambda_ * w #wtf
-    return grad
-
-
-def batch_iter(y, tx, batch_size=1, num_batches=1, shuffle=True):
-    """
-    Generate a minibatch iterator for a dataset.
-    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
-    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
-    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
-    """
-    data_size = len(y)
-
-    if shuffle:
-        shuffle_indices = np.random.permutation(np.arange(data_size))
-        shuffled_y = y[shuffle_indices]
-        shuffled_tx = tx[shuffle_indices]
-    else:
-        shuffled_y = y
-        shuffled_tx = tx
-    for batch_num in range(num_batches):
-        start_index = batch_num * batch_size
-        end_index = min((batch_num + 1) * batch_size, data_size)
-        if start_index != end_index:
-            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]

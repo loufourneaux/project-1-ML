@@ -13,24 +13,54 @@
 # ---
 
 import numpy as np
+from functions import sigmoid
+
+def calculate_mse(e):
+    """Calculate the mse for vector e."""
+    return np.mean(e**2) / 2
 
 
-def compute_mse(y, tx, w):
-    """compute the loss by mse.
+def calculate_mae(e):
+    """Calculate the mae for vector e."""
+    return np.mean(np.abs(e))
+
+
+def calculate_logloss(y_true, y_pred, eps=1e-8):
+    """Calculate the logloss"""
+    return -np.mean(
+        y_true * np.log(y_pred + eps) + (1 - y_true) * np.log(1 - y_pred + eps)
+    )
+
+
+
+def compute_loss(y, tx, w, loss_type):
+    """Calculate the loss using either MSE or MAE.
+
     Args:
-        y: numpy array of shape (N,), N is the number of samples.
-        tx: numpy array of shape (N,D), D is the number of features.
-        w: weights, numpy array of shape(D,), D is the number of features.
+        y: shape=(N, )
+        tx: shape=(N,2)
+        w: shape=(2,). The vector of model parameters.
+        loss_type: string in ["mae", "mse", "log"] specifying the type of loss to compute
 
     Returns:
-        mse: scalar corresponding to the mse with factor (1 / 2 n) in front of the sum
-
-    >>> compute_mse(np.array([0.1,0.2]), np.array([[2.3, 3.2], [1., 0.1]]), np.array([0.03947092, 0.00319628]))
-    0.006417022764962313
+        the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    y = y.reshape(-1,1)
-    e = y - tx.dot(w)
-    mse = e.dot(e) / (2 * len(e))
-    return mse
+
+    e = y -tx.dot(w)
+
+    if loss_type == "mse":
+        return calculate_mse(e)
+
+    elif loss_type == "mae":
+        return calculate_mae(e)
+
+    elif loss_type == "log":
+        y_pred = sigmoid(tx @ w)
+        return calculate_logloss(y, y_pred)
+
+    else:
+        raise ValueError(
+            "Invalid value for argument 'loss_type' when calling compute_loss, 'type' must be in ['mse', 'mae', 'log']."
+        )
 
 

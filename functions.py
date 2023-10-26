@@ -50,7 +50,7 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # compute gradient and loss
         grad = compute_gradient(y, tx, w)
-        loss = compute_mse(y, tx, w)
+        loss = compute_loss(y, tx, w, "mse")
 
         # update w by gradient
         w = w - gamma * grad
@@ -95,7 +95,7 @@ def stochastic_gradient_descent(y, tx, initial_w, max_iters, gamma):
         for minibatch_y, minibatch_tx in batch_iter(y, tx, 1, num_batches=1):
 
             grad = compute_gradient(minibatch_y, minibatch_tx, w)
-            loss = compute_mse(y, tx, w)
+            loss = compute_loss(y, tx, w, "mse")
 
             w = w - gamma * grad
 
