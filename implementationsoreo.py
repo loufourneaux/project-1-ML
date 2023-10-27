@@ -139,7 +139,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for i in range(max_iters):
 
         # compute gradient
-        grad = compute_gradient(y, tx, w, "log")
+        grad = compute_gradient(y, tx, w)
 
         # update w through the stochastic gradient update
         w = w - gamma * grad
@@ -179,13 +179,15 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for i in range(max_iters):
 
         # compute gradient
-        grad = compute_gradient(y, tx, w, "log", lambda_=lambda_)
+        grad = compute_gradient(y, tx, w)
+        grad += 2 * lambda_ * w
 
         # update w through the stochastic gradient update
         w = w - gamma * grad
 
         # calculate loss
         loss = compute_loss(y, tx, w, "log")
+        loss += lambda_ * np.linalg.norm(w) ** 2
 
         # Display current loss and weights
         print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))

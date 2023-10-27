@@ -77,12 +77,11 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
 def compute_f1_score(y_true, y_pred):
+    y_pred[y_pred < 0] = -1
+    y_pred[y_pred >= 0] = 1
     tp = np.sum((y_pred == 1) & (y_pred == y_true))
-    print(tp)
     fp = np.sum((y_pred == 1) & (y_pred != y_true))
-    print(fp)
     fn = np.sum((y_pred == -1) & (y_pred != y_true))
-    print(fn)
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     f1_score = 2 * (precision * recall) / (precision + recall)
