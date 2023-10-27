@@ -27,7 +27,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     for i in range(max_iters):
 
         # compute gradient
-        grad = compute_gradient(y, tx, w, "mse")
+        grad = compute_gradient(y, tx, w)
 
         # update w by gradient descent
         w = w - gamma * grad
@@ -64,7 +64,7 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
         for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size=1, num_batches=1):
 
             # compute gradient
-            grad = compute_gradient(minibatch_y, minibatch_tx, w, "mse")
+            grad = compute_gradient(minibatch_y, minibatch_tx, w)
 
             # update w through the stochastic gradient update
             w = w - gamma * grad
