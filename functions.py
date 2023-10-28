@@ -119,33 +119,7 @@ def sigmoid(t):
         scalar or numpy array"""
     return 1 / (1 + np.exp(-t))
 
-
-def calculate_loss(y, tx, w):
-    """compute the cost by negative log likelihood.
-
-    Args:
-        y:  shape=(N, 1)
-        tx: shape=(N, D)
-        w:  shape=(D, 1)
-
-    Returns:
-        a non-negative loss
-
-    >>> y = np.c_[[0., 1.]]
-    >>> tx = np.arange(4).reshape(2, 2)
-    >>> w = np.c_[[2., 3.]]
-    >>> round(calculate_loss(y, tx, w),8)
-    1.52429481
-    """
-    assert y.shape[0] == tx.shape[0]
-    assert tx.shape[1] == w.shape[0]
-
-    sig= sigmoid(np.dot(tx, w))
-                 
-    loss = (y.T.dot(np.log(sig)) + (1 - y).T.dot(np.log(1 - sig)))
-    return np.sum(-loss)/len(y)
-    
-    
+      
 def calculate_gradient(y, tx, w):
     """compute the gradient of loss.
 
@@ -169,3 +143,22 @@ def calculate_gradient(y, tx, w):
     
     return 1/len(y)*(tx.T.dot(sigmoid(np.dot(tx, w))-y))
     
+def build_poly(x, degree):
+    """
+    Polynomial basis functions for input data x.
+
+    Args:
+        x: numpy array of shape (N, D), where N is the number of samples, and D is the number of features.
+        degree: integer, the degree of the polynomial basis.
+
+    Returns:
+        poly: numpy array of shape (N, D * (degree + 1)), representing the extended feature matrix.
+    """
+    
+    N, D = x.shape
+    poly = np.ones((N, D * (degree + 1)))
+
+    for d in range(1, degree + 1):
+        poly[:, D*d:D*(d+1)] = x ** d
+
+    return poly
