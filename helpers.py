@@ -87,6 +87,29 @@ def compute_f1_score(y_true, y_pred):
     f1_score = 2 * (precision * recall) / (precision + recall)
     return f1_score
 
+def compute_accuracy(y_pred, y_true):
+    """
+    Compute the accuracy of a classification model.
+    
+    Parameters:
+    - y_pred: Predicted labels
+    - y_true: True labels
+    
+    Returns:
+    - accuracy: Accuracy as a floating-point value between 0 and 1.
+    """
+    # Ensure that the input arrays have the same length
+    if len(y_pred) != len(y_true):
+        raise ValueError("Input arrays must have the same length.")
+
+    # Count the number of correct predictions
+    correct_predictions = sum(p == t for p, t in zip(y_pred, y_true))
+
+    # Calculate the accuracy
+    accuracy = correct_predictions / len(y_true)
+
+    return accuracy
+
 def split_data(x, y, ratio, seed=1):
     """
     split the dataset based on the split ratio. If ratio is 0.8
