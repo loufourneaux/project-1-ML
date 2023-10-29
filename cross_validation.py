@@ -208,47 +208,47 @@ def cross_validation_gd(y, x, k_indices, k, initial_w, max_iters, gamma, degree)
     xpoly_tr = build_poly(x_tr, degree)
     xpoly_te = build_poly(x_te, degree)
     # weights and training loss for gradient descent model:
-    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,initial_w,max_iters,gamma)
+    print(y.shape)
+    print(xpoly_tr.shape)
+    ini_w = np.ones((xpoly_tr.shape[1], 1)) if initial_w == 'ones' else np.zeros((xpoly_tr.shape[1], 1))
+    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,ini_w,max_iters,gamma)
     # calculate the loss for test data:
     loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
     loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w,"mse"))
     return loss_tr, loss_te, w
+    
 
-def best_selection_gd(y, x, degrees, k_fold, initial_ws, max_iters,gammas, seed = 1):
+def best_selection_gd(y, x, degrees, k_fold, initial_ws_shape, max_iters,gammas, seed = 1):
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
 
     #for each degree, we compute the best lambdas and the associated rmse
-    best_gammas = []
-    best_initial_w = []
-    best_rmses = []
+    best_params = {'degree': None, 'gamma': None, 'initial_w': None}
+    best_rmse = float('inf')
     #vary degree
     for degree in degrees:
         # cross validation
-        rmse_te = []
         print('Currently trying : '+ str(degree))
         for gamma in gammas:
             print('Currently trying : '+ str(gamma))
             
-            rmse_te_tmp = []
-            for initial_w in initial_ws:
+            for initial_w in initial_ws_shape:
 
                 print('Currently trying : '+ str(initial_w))
-                
-                rmse_te_tmp_w = []
+                rmse_te_degree_gamma_w =[]
                 for k in range(k_fold):
-
+                    
                     _, loss_te,_ = cross_validation_gd(y,x,k_indices, k, initial_w, max_iters, gamma, degree)
-                    rmse_te_tmp_w.append(loss_te)
-                rmse_te_tmp.append(np.mean(rmse_te_tmp_w))
-            rmse_te.append(np.mean(rmse_te_tmp))
-            ind_initial_w_opt = np.argmin(rmse_te)
-            best_initial_w.append(initial_ws[ind_initial_w_opt])
+                    rmse_te_degree_gamma_w.append(loss_te)
+                avg_rmse = np.mean(rmse_te_degree_gamma_w)
+                if avg_rmse < best_rmse:
+                    best_rmse = avg_rmse
+                    best_params['degree'] = degree
+                    best_params['gamma'] = gamma
+                    best_params['initial_w'] = initial_w
 
-        ind_gamma_opt = np.argmin(rmse_te[ind_initial_w_opt])
-        best_gammas.append(gammas[ind_gamma_opt])
-
-    ind_best_degree =  np.argmin(rmse_te[ind_gamma_opt])
+        
     
-    return degrees[ind_best_degree], gammas[ind_gamma_opt], initial_ws[ind_initial_w_opt]
+    return best_params
+
 
