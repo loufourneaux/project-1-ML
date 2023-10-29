@@ -101,8 +101,6 @@ def prediction(x_te, w):
 
 
 def compute_f1_score(y_true, y_pred):
-    y_pred[y_pred < 0] = -1
-    y_pred[y_pred >= 0] = 1
     tp = np.sum((y_pred == 1) & (y_pred == y_true))
     fp = np.sum((y_pred == 1) & (y_pred != y_true))
     fn = np.sum((y_pred == -1) & (y_pred != y_true))
