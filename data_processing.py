@@ -158,19 +158,11 @@ def remove_zero_variance_columns(data, threshold=1e-10):
 
 def clean_all(data):
     data_to_compute = remove_useless_col(data)
-    print(data_to_compute.shape)
     data_to_compute = cleaning_answers(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = remove_col(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = clean_data(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = remove_outliers(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = remove_zero_variance_columns(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = standardize(data_to_compute)
-    print(data_to_compute.shape)
     data_to_compute = remove_correlated_columns(data_to_compute)
-    print(data_to_compute.shape)
-    return data_to_compute.copy()
+    return data_to_compute
