@@ -45,7 +45,8 @@ def compute_loss(y, tx, w, loss_type):
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
-
+    y = y.reshape(-1,1)
+    w = w.reshape(-1,1)
     e = y -tx.dot(w)
 
     if loss_type == "mse":
