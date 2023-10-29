@@ -148,7 +148,7 @@ def ridge_regression(y, tx, lambda_):
     return w, loss
 
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters, gamma, tol=1e-6, divergence_ratio=1.01):
     """Logistic regression using GD
 
     Args:
@@ -166,28 +166,38 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     # Initialize weights and loss
     w = initial_w
     loss = compute_loss(y, tx, w, "log")
+    i = 0
+    loss_change = tol+1  # Initial loss change to enter the loop
+    while i < max_iters and loss_change > tol:
 
-    for i in range(max_iters):
+        prev_loss = loss  # Save previous loss value
 
         # compute gradient
         grad = compute_gradient(y, tx, w)
 
-        # update w through the stochastic gradient update
-        w = w - gamma * grad
+        # update w by gradient descent
+        w -= gamma * grad
 
-        # calculate loss
+        # compute loss
         loss = compute_loss(y, tx, w, "log")
 
+        # Calculate the change in the loss function
+        loss_change = abs(prev_loss - loss)
+
+        if loss > divergence_ratio * prev_loss:
+            print("Divergence detected. Stopping iteration.")
+            break
+
         # Display current loss
-        print(
-            "GD iter. {bi}/{ti}: loss={l}".format(
-                bi=i, ti=max_iters - 1, l=loss
-            )
-        )
+        if i%10 == 0:
+            print(f"GD iter. {i}/{max_iters}: loss={loss}")
+
+        i += 1
+
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma, tol=1e-6, divergence_ratio=1.01):
     """Regularized logistic regression using GD
 
     Args:
@@ -206,22 +216,34 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     # Initialize weights and loss
     w = initial_w
     loss = compute_loss(y, tx, w, "log")
+    i = 0
+    loss_change = tol+1  # Initial loss change to enter the loop
+    while i < max_iters and loss_change > tol:
 
-    for i in range(max_iters):
+        prev_loss = loss  # Save previous loss value
 
         # compute gradient
         grad = compute_gradient(y, tx, w)
         grad += 2 * lambda_ * w
 
-        # update w through the stochastic gradient update
-        w = w - gamma * grad
+        # update w by gradient descent
+        w -= gamma * grad
 
-        # calculate loss
+        # compute loss
         loss = compute_loss(y, tx, w, "log")
-        loss += lambda_ * np.linalg.norm(w) ** 2
+        loss += lambda_ * (np.linalg.norm(w) ** 2)
 
-        # Display current loss and weights
-        print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
+        # Calculate the change in the loss function
+        loss_change = abs(prev_loss - loss)
+
+        if loss > divergence_ratio * prev_loss:
+            print("Divergence detected. Stopping iteration.")
+            break
+
+        # Display current loss
+        if i%10 == 0:
+            print(f"GD iter. {i}/{max_iters}: loss={loss}")
+
+        i += 1
+
     return w, loss
-
-
