@@ -2,6 +2,7 @@
 import csv
 import numpy as np
 import os
+from functions import sigmoid
 
 
 def load_csv_data(data_path, sub_sample=False):
