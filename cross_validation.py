@@ -256,4 +256,124 @@ def best_selection_gd(y, x, degrees, k_fold, initial_ws_shape, max_iters,gammas,
     
     return best_params
 
+def cross_validation_logistic(y, x, k_indices, k,initial_w, max_iters, gamma, degree):
+    """return the loss of ridge regression."""
+    # get k'th subgroup in test, others in train
+    te_index = k_indices[k]
+    tr_index = k_indices[~(np.arange(k_indices.shape[0]) == k)]
+    tr_index = tr_index.reshape(-1)
+    y_te = y[te_index]
+    y_tr = y[tr_index]
+    x_te = x[te_index]
+    x_tr = x[tr_index]
+    # form data with polynomial degree
+    xpoly_tr = build_poly(x_tr, degree)
+    xpoly_te = build_poly(x_te, degree)
+    # weights and training loss for gradient descent model:
+    print(y.shape)
+    print(xpoly_tr.shape)
+    if initial_w == 'ones':
+        ini_w = np.ones((xpoly_tr.shape[1], 1))
+    elif initial_w == 'zeros':
+        ini_w = np.zeros((xpoly_tr.shape[1], 1))
+    elif initial_w == 'random':
+        np.random.seed(42)
+        ini_w = np.random.rand(xpoly_tr.shape[1], 1) 
+    w, loss_tr = logistic_regression(y_tr, xpoly_tr,ini_w,max_iters,gamma)
+    # calculate the loss for test data:
+    loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
+    loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w,"mse"))
+    return loss_tr, loss_te, w
 
+def best_selection_logistic(y, x, max_iters, initial_ws_shape, gammas, degrees, k_fold, seed=1):
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
+
+    #for each degree, we compute the best lambdas and the associated rmse
+    best_params = {'degree': None, 'gamma': None, 'initial_w': None}
+    best_rmse = float('inf')
+    #vary degree
+    for degree in degrees:
+        # cross validation
+        print('Currently trying : '+ str(degree))
+        for gamma in gammas:
+            print('Currently trying : '+ str(gamma))
+            
+            for initial_w in initial_ws_shape:
+
+                print('Currently trying : '+ str(initial_w))
+                rmse_te_degree_gamma_w =[]
+                for k in range(k_fold):
+                    
+                    _, loss_te,_ = cross_validation_logistic(y,x,k_indices, k, initial_w, max_iters, gamma, degree)
+                    rmse_te_degree_gamma_w.append(loss_te)
+                avg_rmse = np.mean(rmse_te_degree_gamma_w)
+                if avg_rmse < best_rmse:
+                    best_rmse = avg_rmse
+                    best_params['degree'] = degree
+                    best_params['gamma'] = gamma
+                    best_params['initial_w'] = initial_w
+
+    
+    return best_params
+    
+def cross_validation_reg_logistic(y, x, k_indices, k,initial_w, lamb, max_iters, gamma, degree):
+    """return the loss of ridge regression."""
+    # get k'th subgroup in test, others in train
+    te_index = k_indices[k]
+    tr_index = k_indices[~(np.arange(k_indices.shape[0]) == k)]
+    tr_index = tr_index.reshape(-1)
+    y_te = y[te_index]
+    y_tr = y[tr_index]
+    x_te = x[te_index]
+    x_tr = x[tr_index]
+    # form data with polynomial degree
+    xpoly_tr = build_poly(x_tr, degree)
+    xpoly_te = build_poly(x_te, degree)
+    # weights and training loss for gradient descent model:
+    print(y.shape)
+    print(xpoly_tr.shape)
+    if initial_w == 'ones':
+        ini_w = np.ones((xpoly_tr.shape[1], 1))
+    elif initial_w == 'zeros':
+        ini_w = np.zeros((xpoly_tr.shape[1], 1))
+    elif initial_w == 'random':
+        np.random.seed(42)
+        ini_w = np.random.rand(xpoly_tr.shape[1], 1) 
+    w, loss_tr = reg_logistic_regression(y_tr, xpoly_tr,lamb,ini_w,max_iters,gamma)
+    # calculate the loss for test data:
+    loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
+    loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w,"mse"))
+    return loss_tr, loss_te, w
+
+def best_selection_reg_logistic(y, x, max_iters, initial_ws_shape, lambdas , gammas, degrees, k_fold, seed=1):
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
+
+    #for each degree, we compute the best lambdas and the associated rmse
+    best_params = {'degree': None, 'gamma': None,'lambda':None ,'initial_w': None}
+    best_rmse = float('inf')
+    #vary degree
+    for degree in degrees:
+        # cross validation
+        print('Currently trying : '+ str(degree))
+        for gamma in gammas:
+            print('Currently trying : '+ str(gamma))
+            for l in lambdas:
+                print('currently trying'+str(l))
+                for initial_w in initial_ws_shape:
+
+                    print('Currently trying : '+ str(initial_w))
+                    rmse_te_degree_gamma_w_l =[]
+                    for k in range(k_fold):
+                    
+                        _, loss_te,_ = cross_validation_reg_logistic(y,x,k_indices, k, l,initial_w, max_iters, gamma, degree)
+                        rmse_te_degree_gamma_w_l.append(loss_te)
+                    avg_rmse = np.mean(rmse_te_degree_gamma_w_l)
+                    if avg_rmse < best_rmse:
+                        best_rmse = avg_rmse
+                        best_params['degree'] = degree
+                        best_params['gamma'] = gamma
+                        best_params['initial_w'] = initial_w
+                        best_params['lambda']=l
+    return best_params
