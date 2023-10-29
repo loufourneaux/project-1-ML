@@ -76,6 +76,29 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
+def prediction(x_te, w):
+    """
+    Make predictions based on the input features and weights.
+    Args:
+    x_te (array): Input features for prediction.
+    w (array): Weights of the model.
+    
+    Returns:
+    array: Predicted labels.
+    """
+    # Calculate the dot product of the input features and weights
+    y_pred_prob = np.dot(x_te, w)
+    
+    # Apply sigmoid function to convert predictions to probabilities
+    y_pred_prob = sigmoid(y_pred_prob)
+    
+    # Classify probabilities above 0.5 as class 1 and below or equal to 0.5 as class -1
+    y_pred_prob[y_pred_prob > 0.5] = 1
+    y_pred_prob[y_pred_prob <= 0.5] = -1
+    
+    return y_pred_prob
+
+
 def compute_f1_score(y_true, y_pred):
     y_pred[y_pred < 0] = -1
     y_pred[y_pred >= 0] = 1
