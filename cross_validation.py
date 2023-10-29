@@ -210,8 +210,13 @@ def cross_validation_gd(y, x, k_indices, k, initial_w, max_iters, gamma, degree)
     # weights and training loss for gradient descent model:
     print(y.shape)
     print(xpoly_tr.shape)
-    ini_w = np.ones((xpoly_tr.shape[1], 1)) if initial_w == 'ones' else np.zeros((xpoly_tr.shape[1], 1))
-    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,ini_w,max_iters,gamma)
+    if initial_w == 'ones':
+        ini_w = np.ones((xpoly_tr.shape[1], 1))
+    elif initial_w == 'zeros':
+        ini_w = np.zeros((xpoly_tr.shape[1], 1))
+    elif initial_w == 'random':
+        np.random.seed(42)
+        ini_w = np.random.rand(xpoly_tr.shape[1], 1)    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,ini_w,max_iters,gamma)
     # calculate the loss for test data:
     loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
     loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w,"mse"))
