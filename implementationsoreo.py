@@ -39,6 +39,57 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
         print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
 
     return w, loss
+    
+def mean_squared_error_gd_optimized(y, tx, initial_w, max_iters, gamma, tol=1e-5, divergence_ratio=1.5):
+    """The Gradient Descent (GD) algorithm using MSE loss.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N,D)
+        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of GD
+        gamma: a scalar denoting the stepsize
+        tol: tolerance for convergence criteria
+        divergence_ratio: ratio to consider the loss as diverging
+
+    Returns:
+        w: model parameters as numpy arrays of shape (D, )
+        loss: loss mse value (scalar)
+    """
+
+    w = initial_w
+    loss = compute_loss(y, tx, w, "mse")
+    i = 0
+    loss_change = tol+1  # Initial loss change to enter the loop
+
+    while i < max_iters and loss_change > tol:
+
+        prev_loss = loss  # Save previous loss value
+
+        # compute gradient
+        grad = compute_gradient(y, tx, w)
+
+        # update w by gradient descent
+        w = w - gamma * grad
+
+        # compute loss
+        loss = compute_loss(y, tx, w, "mse")
+
+        # Calculate the change in the loss function
+        loss_change = abs(prev_loss - loss)
+
+        if loss > divergence_ratio * prev_loss:
+            print("Divergence detected. Stopping iteration.")
+            break
+
+        # Display current loss
+        if i%10 == 0:
+            print(f"GD iter. {i}/{max_iters}: loss={loss}")
+
+        i += 1
+
+    return w, loss
+
 
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
