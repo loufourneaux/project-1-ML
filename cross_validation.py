@@ -377,3 +377,41 @@ def best_selection_reg_logistic(y, x, max_iters, initial_ws_shape, lambdas , gam
                         best_params['initial_w'] = initial_w
                         best_params['lambda']=l
     return best_params
+
+def cross_validation_least_squares(y, x, k_indices, k, degree):
+    """return the loss of least squares regression"""
+    # get k'th subgroup in test, others in train
+    te_index = k_indices[k]
+    tr_index = k_indices[~(np.arange(k_indices.shape[0]) == k)]
+    tr_index = tr_index.reshape(-1)
+    y_te = y[te_index]
+    y_tr = y[tr_index]
+    x_te = x[te_index]
+    x_tr = x[tr_index]
+    # form data with polynomial degree
+    xpoly_tr = build_poly(x_tr, degree)
+    xpoly_te = build_poly(x_te, degree)
+    # weights and training loss for ridge regression model:
+    w, loss_tr = least_squares(y_tr, xpoly_tr) 
+    # calculate the loss for test data:
+    loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
+    loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w, "mse"))
+    return loss_tr, loss_te, w
+
+def best_degree_selection_least_squares(y, x, degrees, k_fold, seed = 1):
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
+    
+    #vary degree
+    rmse_te=[]
+    for degree in degrees:
+        rmse_te_tmp= []
+        for k in range(k_fold):
+            _, loss_te,_ = cross_validation_least_squares(y, x, k_indices, k,degree)
+            rmse_te_tmp.append(loss_te)
+        rmse_te.append(np.mean(rmse_te_tmp))
+    
+         
+    ind_best_degree =  np.argmin(rmse_te)      
+        
+    return degrees[ind_best_degree]
