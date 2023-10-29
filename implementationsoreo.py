@@ -3,44 +3,8 @@ import numpy as np
 from costs import *
 from functions import *
 from helpers import batch_iter
-
-
-def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
-    """The Gradient Descent (GD) algorithm using MSE loss.
-
-    Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N,D)
-        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of GD
-        gamma: a scalar denoting the stepsize
-
-    Returns:
-        w: model parameters as numpy arrays of shape (D, )
-        loss: loss mse value (scalar)
-    """
-
-    # Initialize weights and loss
-    w = initial_w
-    loss = compute_loss(y, tx, w, "mse")
-
-    for i in range(max_iters):
-
-        # compute gradient
-        grad = compute_gradient(y, tx, w)
-
-        # update w by gradient descent
-        w = w - gamma * grad
-
-        # compute loss
-        loss = compute_loss(y, tx, w, "mse")
-
-        # Display current loss
-        print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
-
-    return w, loss
     
-def mean_squared_error_gd_optimized(y, tx, initial_w, max_iters, gamma, tol=1e-5, divergence_ratio=1.5):
+def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma, tol=1e-5, divergence_ratio=1.5):
     """The Gradient Descent (GD) algorithm using MSE loss.
 
     Args:
@@ -92,15 +56,17 @@ def mean_squared_error_gd_optimized(y, tx, initial_w, max_iters, gamma, tol=1e-5
 
 
 
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, tol=1e-6, divergence_ratio=1.01):
     """The Stochastic Gradient Descent algorithm (SGD) using MSE loss.
 
-    Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N,D)
-        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of SGD
-        gamma: a scalar denoting the stepsize
+     Args:
+        y (array): numpy array of shape=(N, ) representing target values
+        tx (array): numpy array of shape=(N,D) representing feature values
+        initial_w (array): numpy array of shape=(D, ). The initial guess for the model parameters
+        max_iters (int): a scalar denoting the total number of iterations of SGD
+        gamma (float): a scalar denoting the stepsize
+        tol (float, optional): Tolerance for the difference in loss. Defaults to 1e-6.
+       divergence_ratio (float, optional): Ratio to determine divergence. Defaults to 1.01.
 
     Returns:
         w: model parameters as numpy arrays of shape (D, )
@@ -110,9 +76,14 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     # Initialize weights and loss
     w = initial_w
     loss = compute_loss(y, tx, w, "mse")
-
-    for n_iter in range(max_iters):
+    i = 0
+    loss_change = tol+1  # Initial loss change to enter the loop
+    did_break = False
+    while i < max_iters and loss_change > tol:
+        if did_break:
+            break
         for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size=1, num_batches=1):
+            prev_loss = loss  # Save previous loss value
 
             # compute gradient
             grad = compute_gradient(minibatch_y, minibatch_tx, w)
@@ -123,11 +94,20 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
             # calculate loss
             loss = compute_loss(y, tx, w, "mse")
 
-        # Display current loss
-        print(
-            "SGD iter. {bi}/{ti}: loss={l}".format(bi=n_iter, ti=max_iters - 1, l=loss)
-        )
+            if loss > divergence_ratio * prev_loss:
+                print("Divergence detected. Stopping iteration.")
+                did_break = True
+                break
 
+            # Calculate the change in the loss function
+            loss_change = abs(prev_loss - loss)
+            # Display current loss
+        if i%10 == 0:
+            # Display current loss
+            print(
+            "SGD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss)
+            )
+        i += 1
     return w, loss
 
 
