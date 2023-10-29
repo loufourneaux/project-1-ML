@@ -1,57 +1,75 @@
 import numpy as np
 
+# Function to remove columns with too many NaN values
 def remove_col(x, nan_percentage=0.8):
-    to_delete = []
-    for i in range(x.shape[1] - 1, 1, -1):
-        num_NaN = np.count_nonzero(np.isnan(x[:, i]))
-        p_NaN = num_NaN / x.shape[0]
-        if p_NaN > nan_percentage:
-            to_delete.append(i)
+    """
+    Remove columns from the data where the percentage of NaN values 
+    exceeds a specified threshold.
+    
+    Args:
+    x (numpy.ndarray): Input data.
+    nan_percentage (float): Threshold for removing columns.
+    
+    Returns:
+    numpy.ndarray: Data with some columns removed.
+    """
+    to_delete = [i for i in range(x.shape[1]) if np.mean(np.isnan(x[:, i])) > nan_percentage]
+    return np.delete(x, to_delete, axis=1)
 
-    x = x[:, [i for i in range(x.shape[1]) if i not in to_delete]]
-    return x
-
+# Function to remove outliers in the data
 def remove_outliers(data):
-    filtered_data = data.copy()
-    for i in range(filtered_data.shape[1]):
-        col_data = filtered_data[:, i]
-        q1 = np.percentile(col_data, 25)
-        q3 = np.percentile(col_data, 75)
-        iqr = q3 - q1
-        lower_bound = q1 - 1.5 * iqr
-        upper_bound = q3 + 1.5 * iqr
-
-        col_data[(col_data < lower_bound) | (col_data > upper_bound)] = np.median(col_data)
-        filtered_data[:, i] = col_data
-    return filtered_data
-
-def standardize(data):
-    mean = np.mean(data, axis=0)
-    std = np.std(data, axis=0)
-    for i in range(len(std)):
-        if std[i] < 1e-10:
-            std[i] = 1
-    standardized_data = (data - mean) / std
-    return standardized_data
-
-def remove_correlated_columns(data, correlation_threshold=0.1):
-    uncorrelated_data = data.copy()
-    upper_triangle = np.triu(np.ones((data.shape[1], data.shape[1]), dtype=bool), k=1)
-
-    indices_to_delete = []
-
+    """
+    Remove outliers from the data. Outliers are values that lie 
+    below Q1-1.5*IQR or above Q3+1.5*IQR.
+    
+    Args:
+    data (numpy.ndarray): Input data.
+    
+    Returns:
+    numpy.ndarray: Data with outliers removed.
+    """
     for i in range(data.shape[1]):
-        for j in range(i + 1, data.shape[1]):
-            if upper_triangle[i, j]:
-                corr = np.corrcoef(uncorrelated_data[:, i], uncorrelated_data[:, j])[0, 1]
-                if np.abs(corr) >= correlation_threshold:
-                    indices_to_delete.append(j)
+        q1, q3 = np.percentile(data[:, i], [25, 75])
+        iqr = q3 - q1
+        outlier_indices = np.where((data[:, i] < q1 - 1.5*iqr) | (data[:, i] > q3 + 1.5*iqr))
+        data[outlier_indices, i] = np.median(data[:, i])
+    return data
 
-    uncorrelated_data = np.delete(uncorrelated_data, indices_to_delete, axis=1)
+# Function to standardize the data
+def standardize(data):
+    """
+    Standardize the data by removing the mean and scaling to unit variance.
+    
+    Args:
+    data (numpy.ndarray): Input data.
+    
+    Returns:
+    numpy.ndarray: Standardized data.
+    """
+    mean, std = np.mean(data, axis=0), np.std(data, axis=0)
+    return (data - mean) / (std + 1e-10)
 
-    return uncorrelated_data
+# Function to remove correlated columns in the data
+def remove_correlated_columns(data, correlation_threshold=0.1):
+    """
+    Remove columns from the data that have a correlation higher 
+    than a specified threshold.
+    
+    Args:
+    data (numpy.ndarray): Input data.
+    correlation_threshold (float): Threshold for removing columns.
+    
+    Returns:
+    numpy.ndarray: Data with some columns removed.
+    """
+    corr_matrix = np.corrcoef(data, rowvar=False)
+    to_delete = np.any(np.triu(corr_matrix, k=1) > correlation_threshold, axis=0)
+    return np.delete(data, np.where(to_delete), axis=1)
 
 def clean_data(data):
+    """
+    Fill NaN values in each column with the median of non-NaN values of the same column.
+    """
     clean_datas = data.copy()
 
     for i in range(data.shape[1]):
@@ -67,6 +85,10 @@ def clean_data(data):
     return clean_datas
 
 def cleaning_answers(data):
+    """
+    Clean the data based on unique values, max value and specific conditions.
+    Replace specific values according to the conditions met.
+    """
     datas_cleaned = data.copy()
 
     for i in range(datas_cleaned.shape[1]):
@@ -147,16 +169,31 @@ def cleaning_answers(data):
     return datas_cleaned
 
 def remove_useless_col(data):
-    col_to_remove = [1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 18, 19, 21, 22, 24, 52, 53, 54, 60, 98, 104, 105, 119, 120, 121, 122, 123, 124, 125, 126, 130, 131, 132, 133, 166, 179, 181, 211, 212, 216, 217, 219, 220, 221, 222, 226, 227, 228, 229, 235, 236, 237, 239, 240, 241, 244, 245, 246, 256, 286, 310, 311, 316, 317, 320]
+    """
+    Remove specified columns from the data.
+    """
+    col_to_remove = [
+        1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 18, 19, 21, 22, 24, 52, 53, 54, 60, 98,
+        104, 105, 119, 120, 121, 122, 123, 124, 125, 126, 130, 131, 132, 133, 166,
+        179, 181, 211, 212, 216, 217, 219, 220, 221, 222, 226, 227, 228, 229, 235,
+        236, 237, 239, 240, 241, 244, 245, 246, 256, 286, 310, 311, 316, 317, 320
+    ]
+
     return np.delete(data, col_to_remove, axis=1)
 
-#Apply this function before standardization
 def remove_zero_variance_columns(data, threshold=1e-10):
+    """
+    Remove columns from the data where the variance is below a certain threshold.
+    """
     variances = np.var(data, axis=0)
     non_zero_variance_indices = np.where(variances > threshold)[0]
+
     return data[:, non_zero_variance_indices]
 
 def clean_all(data):
+    """
+    Apply all functions used to clean the dataset
+    """
     data_to_compute = remove_useless_col(data)
     data_to_compute = cleaning_answers(data_to_compute)
     data_to_compute = remove_col(data_to_compute)
