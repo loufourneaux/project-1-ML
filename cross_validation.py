@@ -216,13 +216,13 @@ def cross_validation_gd(y, x, k_indices, k, initial_w, max_iters, gamma, degree)
         ini_w = np.zeros((xpoly_tr.shape[1], 1))
     elif initial_w == 'random':
         np.random.seed(42)
-        ini_w = np.random.rand(xpoly_tr.shape[1], 1)    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,ini_w,max_iters,gamma)
+        ini_w = np.random.rand(xpoly_tr.shape[1], 1)
+    w, loss_tr = mean_squared_error_gd(y_tr, xpoly_tr,ini_w,max_iters,gamma, divergence_ratio=1.01)
     # calculate the loss for test data:
     loss_tr = np.sqrt(2 * compute_loss(y_tr, xpoly_tr, w, "mse"))
     loss_te = np.sqrt(2 * compute_loss(y_te, xpoly_te, w,"mse"))
     return loss_tr, loss_te, w
     
-
 def best_selection_gd(y, x, degrees, k_fold, initial_ws_shape, max_iters,gammas, seed = 1):
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
@@ -252,9 +252,9 @@ def best_selection_gd(y, x, degrees, k_fold, initial_ws_shape, max_iters,gammas,
                     best_params['gamma'] = gamma
                     best_params['initial_w'] = initial_w
 
-        
-    
     return best_params
+
+
 
 def cross_validation_logistic(y, x, k_indices, k,initial_w, max_iters, gamma, degree):
     """return the loss of ridge regression."""
