@@ -1,8 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from helpers import *
-from costs import *
-
 
 def compute_gradient(y, tx, w):
     """Computes the gradient at w.
