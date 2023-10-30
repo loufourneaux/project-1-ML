@@ -39,10 +39,6 @@ def load_csv_data(data_path, sub_sample=False):
     test_ids = x_test[:, 0].astype(dtype=int)
     x_train = x_train[:, 1:]
     x_test = x_test[:, 1:]
-    
-    #add columns numbers 
-    column_numbers = np.arange(1, x_train.shape[1] + 1)
-    x_train = np.vstack((column_numbers, x_train))
 
     # sub-sample
     if sub_sample:
