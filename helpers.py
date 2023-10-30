@@ -86,7 +86,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
-def prediction(x_te, w):
+def prediction(x_te, w, threshold = 0.55):
     """
     Make predictions based on the input features and weights.
     Args:
@@ -103,8 +103,8 @@ def prediction(x_te, w):
     y_pred_prob = sigmoid(y_pred_prob)
     
     # Classify probabilities above 0.5 as class 1 and below or equal to 0.5 as class -1
-    y_pred_prob[y_pred_prob > 0.5] = 1
-    y_pred_prob[y_pred_prob <= 0.5] = -1
+    y_pred_prob[y_pred_prob > threshold] = 1
+    y_pred_prob[y_pred_prob <= threshold] = -1
     
     return y_pred_prob
 
