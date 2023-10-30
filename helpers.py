@@ -210,7 +210,6 @@ def split_data(x, y, ratio, seed=1):
 
     idx = np.random.permutation(np.arange(len(x)))
     idx_max = np.floor(ratio * len(x)).astype(int)
-    print(idx)
 
     x_tr = x[idx][:idx_max]
     x_te = x[idx][idx_max:]
