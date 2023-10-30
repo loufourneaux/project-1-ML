@@ -36,14 +36,12 @@ All the details about the choices that have been made and the methodology used t
 # Reproduce results
 The results have been produced on a Anaconda Prompt terminal with version ...
 
-- Download the folder Project1submission.zip
-- Extract the folder Project1submission from the zip
-- Open your terminal
-- cd path_to_folder_Project1submission
-- If the defaults environnment is not activated type conda activate
-- execute python run.py
+- Open your terminal and access the folder in which the repository is going to be cloned using cd
+- Clone the repository
+- Make sure that the folder where the repository is cloned has a sub-folder dataset with the files x_train.csv, y_train.csv and x_test.csv
+- Execute python run.py
 - A file called 'submission' has been created with the required format
-
+- 
 ## Requirements
 - Python==3.9.13
 - Numpy==1.21.5
