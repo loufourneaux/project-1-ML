@@ -34,6 +34,16 @@ myocardial infarction) or angina.
 ## Report
 All the details about the choices that have been made and the methodology used throughout this project are available in `report.pdf`. In this report, the different asumptions, decisions and results made and found are explained.
 # Reproduce results
+The results have been produced on a Anaconda Prompt terminal with version ...
+
+- Download the folder Project1submission.zip
+- Extract the folder Project1submission from the zip
+- Open your terminal
+- cd path_to_folder_Project1submission
+- If the defaults environnment is not activated type conda activate
+- execute python run.py
+- A file called 'submission' has been created with the required format
+
 ## Requirements
 - Python==3.9.13
 - Numpy==1.21.5
