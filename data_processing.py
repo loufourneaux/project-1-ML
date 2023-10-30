@@ -50,7 +50,7 @@ def standardize(data):
     return (data - mean) / (std + 1e-10)
 
 # Function to remove correlated columns in the data
-def remove_correlated_columns(data, correlation_threshold=0.1):
+def remove_correlated_columns(data, correlation_threshold=0.8):
     """
     Remove columns from the data that have a correlation higher 
     than a specified threshold.
