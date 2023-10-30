@@ -111,7 +111,6 @@ def clean_all(data):
     Apply all functions used to clean the dataset
     """
     data_to_compute = remove_useless_col(data)
-    data_to_compute = cleaning_answers(data_to_compute)
     data_to_compute = remove_col(data_to_compute)
     data_to_compute = clean_data(data_to_compute)
     data_to_compute = remove_outliers(data_to_compute)
