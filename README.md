@@ -1,7 +1,7 @@
 # CS-433: Machine Learning Fall 2023, Project 1 
 - Team Name: Clementines
 - Team Member:
-    1. Lou, **SCIPER: 311084** (lou.fourneaux@epfl.ch)
+    1. Lou Fourneaux, **SCIPER: 311084** (lou.fourneaux@epfl.ch)
     2. Adrien Feillard, **SCIPER: 315921** (adrien.feillard@epfl.ch)
     3. Laissy Aurélien, **SCIPER: 329573** (aurelien.laissy@epfl.ch)
 
