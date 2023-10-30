@@ -49,17 +49,30 @@ def load_csv_data(data_path, sub_sample=False):
     return x_train, x_test, y_train, train_ids, test_ids
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
-    """
+    """  
     Generate a minibatch iterator for a dataset.
-    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
-    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
-    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
-    """
+    
+    This function takes as input two iterables (here the output desired values 'y' and the input data 'tx') and
+    outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
+    
+    Parameters:
+    - y : array-like, shape = [n_samples]
+        The output desired values.
+    - tx : array-like, shape = [n_samples, n_features]
+        The input data.
+    - batch_size : int
+        Size of each mini-batch.
+    - num_batches : int, optional, default = 1
+        Number of batches to return.
+    - shuffle : bool, optional, default = True
+        Whether to shuffle the data before splitting into batches.
     data_size = len(y)
-
+    Yields:
+    - minibatch_y : array-like, shape = [batch_size]
+        Mini-batch of desired output values.
+    - minibatch_tx : array-like, shape = [batch_size, n_features]
+        Mini-batch of input data.
+    """    
     if shuffle:
         shuffle_indices = np.random.permutation(np.arange(data_size))
         shuffled_y = y[shuffle_indices]
