@@ -17,7 +17,7 @@
 
 # Getting started
 ## Project description
-The aim of this project of Machine Learning do some early detection and prevention MICHD diseases.Our job is to estimate the likelihood of developing MICHD given a certain clinical and lifestyle situation.
+The aim of this project of Machine Learning do some early detection and prevention MICHD diseases. The goal is to estimate the likelihood of developing MICHD given a certain clinical and lifestyle situation.
 The model is based on a vector of features collecting the health-related data of a person.
 
 More detail about the project ara available in `references/project1_description.pdf`. Here a regularized logistic regression is implemented and trained on 8 sub-sets of the full dataset. 
