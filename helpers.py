@@ -86,27 +86,41 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
-def prediction(x_te, w, threshold = 0.55):
+def prediction(x_te, w, threshold=0.55):
     """
     Make predictions based on the input features and weights.
-    Args:
-    x_te (array): Input features for prediction.
-    w (array): Weights of the model.
     
+    This function takes as input the features for prediction and the weights of the model, 
+    and it returns the predicted labels. The sigmoid function is applied to the dot product 
+    of the input features and weights to get the probabilities. Then, a threshold is applied 
+    to classify each probability into a class label.
+    
+    Parameters:
+    - x_te : array-like, shape = [n_samples, n_features]
+        Input features for prediction.
+    - w : array-like, shape = [n_features]
+        Weights of the model.
+    - threshold : float, optional, default = 0.55
+        Classification threshold. Probabilities above this threshold will be classified as 1, 
+        and below or equal as -1.
+        
     Returns:
-    array: Predicted labels.
+    - array-like, shape = [n_samples]
+        Predicted labels. Each element is either 1 or -1.
     """
+    
     # Calculate the dot product of the input features and weights
     y_pred_prob = np.dot(x_te, w)
     
-    # Apply sigmoid function to convert predictions to probabilities
+    # Apply the sigmoid function to convert the dot product results into probabilities
     y_pred_prob = sigmoid(y_pred_prob)
     
-    # Classify probabilities above 0.5 as class 1 and below or equal to 0.5 as class -1
-    y_pred_prob[y_pred_prob > threshold] = 1
-    y_pred_prob[y_pred_prob <= threshold] = -1
+    # Classify the results into two classes (1 or -1) based on the specified threshold
+    y_pred_prob[y_pred_prob > threshold] = 1  # Probabilities above the threshold are classified as 1
+    y_pred_prob[y_pred_prob <= threshold] = -1  # Probabilities below or equal to the threshold are classified as -1
     
-    return y_pred_prob
+    return y_pred_prob  # Return the array of predicted labels
+
 
 
 def compute_f1_score(y_true, y_pred):
