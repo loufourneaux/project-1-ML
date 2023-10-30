@@ -10,11 +10,10 @@
     * [Data](#data)
     * [Report](#report)
 * [Reproduce results](#reproduce-results)
-    * [Instructions to run](#Instructions-to-run)
     * [Requirements](#Requirements)
+    * [Results](#results)
     * [Repo Architecture](#repo-architecture)
     
-* [Results](#results)
 
 # Getting started
 ## Project description
@@ -35,7 +34,6 @@ myocardial infarction) or angina.
 ## Report
 All the details about the choices that have been made and the methodology used throughout this project are available in `report.pdf`. In this report, the different asumptions, decisions and results made and found are explained.
 ## Reproduce results
-#Instructions-to-run
 The results have been produced on a Anaconda Prompt terminal with anaconda version: 23.9.0
 
 - Open your terminal and access the folder in which the repository is going to be cloned using cd
