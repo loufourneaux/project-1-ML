@@ -7,12 +7,12 @@ from functions import sigmoid
 
 def load_csv_data(data_path, sub_sample=False):
     """
-    This function loads the data and returns the respectinve numpy arrays.
-    Remember to put the 3 files in the same folder and to not change the names of the files.
+    This function loads the data and returns the respective numpy arrays.
+    Remember to put the 3 files in the same folder as the rest and to not change the names of the files.
 
     Args:
         data_path (str): datafolder path
-        sub_sample (bool, optional): If True the data will be subsempled. Default to False.
+        sub_sample (bool, optional): If True the data will be subsampled. Default to False.
 
     Returns:
         x_train (np.array): training data
