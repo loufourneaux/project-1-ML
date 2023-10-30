@@ -34,7 +34,7 @@ myocardial infarction) or angina.
 ## Report
 All the details about the choices that have been made and the methodology used throughout this project are available in `report.pdf`. In this report, the different asumptions, decisions and results made and found are explained.
 # Reproduce results
-The results have been produced on a Anaconda Prompt terminal with version ...
+The results have been produced on a Anaconda Prompt terminal with anaconda version: 23.9.0
 
 - Open your terminal and access the folder in which the repository is going to be cloned using cd
 - Clone the repository
@@ -43,9 +43,8 @@ The results have been produced on a Anaconda Prompt terminal with version ...
 - A file called 'submission' has been created with the required format
 
 ## Requirements
-- Python==3.9.13
-- Numpy==1.21.5
-- Matplotlib
+- Python==3.11.5
+- Numpy==1.24.3
 
 ## Repo Architecture
 <pre>  
