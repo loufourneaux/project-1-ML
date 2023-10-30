@@ -1,6 +1,7 @@
 import numpy as np
 from functions import sigmoid
 
+
 def calculate_mse(e):
     """
     Calculate the mean squared error (MSE) for vector e.
@@ -11,7 +12,8 @@ def calculate_mse(e):
     Returns:
     float: mean squared error
     """
-    return np.mean(e**2) / 2
+    return np.mean(e ** 2) / 2
+
 
 def calculate_mae(e):
     """
@@ -25,6 +27,7 @@ def calculate_mae(e):
     """
     return np.mean(np.abs(e))
 
+
 def calculate_logloss(y_true, y_pred, eps=1e-8):
     """
     Calculate the logistic loss (logloss).
@@ -37,8 +40,9 @@ def calculate_logloss(y_true, y_pred, eps=1e-8):
     Returns:
     float: logistic loss
     """
-    y_true = (y_true + 1)/2 # Shift y_true from (-1, 1) to (0, 1)
+    y_true = (y_true + 1) / 2  # Shift y_true from (-1, 1) to (0, 1)
     return -np.mean(y_true * np.log(y_pred + eps) + (1 - y_true) * np.log(1 - y_pred + eps))
+
 
 def compute_loss(y, tx, w, loss_type):
     """
@@ -55,7 +59,7 @@ def compute_loss(y, tx, w, loss_type):
     """
     y, w = y.reshape(-1, 1), w.reshape(-1, 1)
     e = y - tx.dot(w)
-    
+
     if loss_type == "mse":
         return calculate_mse(e)
     elif loss_type == "mae":
