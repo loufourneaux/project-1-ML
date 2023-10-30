@@ -2,6 +2,7 @@ from functions import *
 from helpers import batch_iter
 from costs import *
 
+
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma, tol=1e-5, divergence_ratio=1.5):
     """The Gradient Descent (GD) algorithm using MSE loss.
 
