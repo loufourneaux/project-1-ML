@@ -66,13 +66,14 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         Number of batches to return.
     - shuffle : bool, optional, default = True
         Whether to shuffle the data before splitting into batches.
-    data_size = len(y)
     Yields:
     - minibatch_y : array-like, shape = [batch_size]
         Mini-batch of desired output values.
     - minibatch_tx : array-like, shape = [batch_size, n_features]
         Mini-batch of input data.
     """    
+    data_size = len(y)
+
     if shuffle:
         shuffle_indices = np.random.permutation(np.arange(data_size))
         shuffled_y = y[shuffle_indices]
