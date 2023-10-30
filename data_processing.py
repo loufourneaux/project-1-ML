@@ -38,7 +38,7 @@ def remove_outliers(data):
 # Function to standardize the data
 def standardize(data):
     """
-    Standardize the data by removing the mean and scaling to unit variance.
+    Standardize the data by removing the mean and scaling to unit variance. (z-score Normalization)
     
     Args:
     data (numpy.ndarray): Input data.
