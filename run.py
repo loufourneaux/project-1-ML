@@ -3,7 +3,7 @@ from helpers import *
 from data_processing import *
 from cross_validation import *
 
-x_train, x_test, y_train, train_ids, test_ids = load_csv_data('./dataset/dataset/dataset_to_release')
+x_train, x_test, y_train, train_ids, test_ids = load_csv_data('.\\dataset')
 x_train_preprocessed = clean_all(x_train)
 x_test_preprocessed = clean_all(x_test)
 x_tr, x_te, y_tr, y_te = split_data(x_train_preprocessed, y_train, 0.95)
@@ -85,3 +85,5 @@ if best_method == 'Reglog':
     w_pred = w_reglog
 y_pred = prediction(x_test_preprocessed, w_pred)
 create_csv_submission(test_ids, y_pred, 'submission')
+
+#%%
