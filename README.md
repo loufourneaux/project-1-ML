@@ -19,8 +19,9 @@
 ## Project description
 The aim of this project of Machine Learning do some early detection and prevention MICHD diseases. The goal is to estimate the likelihood of developing MICHD given a certain clinical and lifestyle situation.
 The model is based on a vector of features collecting the health-related data of a person.
+We preprocess and train the dataset on 6 different regression models using cross validation methods to tune hyperparameters. and we assess which one gives the best f1 score to give the best prediction.
 
-More detail about the project ara available in `references/project1_description.pdf`. Here a regularized logistic regression is implemented and trained on 8 sub-sets of the full dataset. 
+More details about the project are available in `references/project1_description.pdf`.
 ## Data
 The data that you will use comes from the Behavioral Risk Factor Surveillance System (BRFSS), a system of
 health-related telephone surveys that collects state data about U.S. residents regarding their health-related risk
