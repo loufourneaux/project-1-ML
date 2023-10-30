@@ -124,13 +124,43 @@ def prediction(x_te, w, threshold=0.55):
 
 
 def compute_f1_score(y_true, y_pred):
+    """
+    Compute the F1 Score, also known as balanced F-score or F-measure.
+    
+    The F1 Score is the harmonic mean of precision and recall, where an F1 Score reaches its 
+    best value at 1 (perfect precision and recall) and worst at 0.
+    
+    Parameters:
+    - y_true : array-like, shape = [n_samples]
+        True labels. Each element is either 1 or -1.
+    - y_pred : array-like, shape = [n_samples]
+        Predicted labels by the model. Each element is either 1 or -1.
+        
+    Returns:
+    - float
+        The F1 Score of the prediction.
+    """
+    
+    # Calculate True Positives (tp): The cases which were predicted as positive and are actually positive
     tp = np.sum((y_pred == 1) & (y_pred == y_true))
+    
+    # Calculate False Positives (fp): The cases which were predicted as positive but are actually negative
     fp = np.sum((y_pred == 1) & (y_pred != y_true))
+    
+    # Calculate False Negatives (fn): The cases which were predicted as negative but are actually positive
     fn = np.sum((y_pred == -1) & (y_pred != y_true))
+    
+    # Calculate Precision: The ratio of correctly predicted positive observations to the total predicted positives
     precision = tp / (tp + fp)
+    
+    # Calculate Recall (Sensitivity): The ratio of correctly predicted positive observations to the all observations in actual class
     recall = tp / (tp + fn)
+    
+    # Calculate F1 Score: The weighted average of Precision and Recall
     f1_score = 2 * (precision * recall) / (precision + recall)
-    return f1_score
+    
+    return f1_score  # Return the F1 Score
+
 
 def compute_accuracy(y_pred, y_true):
     """
